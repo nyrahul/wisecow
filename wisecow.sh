@@ -24,9 +24,23 @@ HTTP/1.1 200
 EOF
 }
 
-echo "Listening on $SRVPORT..."
+prerequisites() {
+	command -v cowsay >/dev/null 2>&1 &&
+	command -v fortune >/dev/null 2>&1 || 
+		{ 
+			echo "Install prerequisites."
+			exit 1
+		}
+}
 
-while [ 1 ]; do
-	cat $RSPFILE | nc -lN $SRVPORT | handleRequest
-	sleep 0.01
-done
+main() {
+	prerequisites
+	echo "Wisdom served on port=$SRVPORT..."
+
+	while [ 1 ]; do
+		cat $RSPFILE | nc -lN $SRVPORT | handleRequest
+		sleep 0.01
+	done
+}
+
+main
