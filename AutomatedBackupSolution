@@ -1,0 +1,69 @@
+import os
+import subprocess
+import smtplib
+from email.mime.text import MIMEText
+from datetime import datetime
+
+# Configuration
+LOCAL_DIR = "/path/to/local/directory"
+REMOTE_USER = "remote_user"
+REMOTE_HOST = "remote_host"
+REMOTE_DIR = "/path/to/remote/directory"
+LOG_FILE = "/path/to/backup.log"
+EMAIL_REPORT = True
+EMAIL_FROM = "you@example.com"
+EMAIL_TO = "admin@example.com"
+SMTP_SERVER = "smtp.example.com"
+SMTP_PORT = 587
+SMTP_USER = "smtp_user"
+SMTP_PASS = "smtp_password"
+
+def run_backup():
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    log_entry = f"Backup started at {timestamp}\n"
+    
+    # Create rsync command
+    rsync_command = [
+        "rsync", "-avz", LOCAL_DIR,
+        f"{REMOTE_USER}@{REMOTE_HOST}:{REMOTE_DIR}"
+    ]
+    
+    try:
+        # Run rsync command
+        result = subprocess.run(rsync_command, capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            log_entry += "Backup completed successfully.\n"
+        else:
+            log_entry += f"Backup failed with error:\n{result.stderr}\n"
+        
+        log_entry += result.stdout
+        
+    except Exception as e:
+        log_entry += f"Backup failed with exception:\n{str(e)}\n"
+
+    # Write log entry to log file
+    with open(LOG_FILE, "a") as log_file:
+        log_file.write(log_entry + "\n")
+    
+    # Send email report if enabled
+    if EMAIL_REPORT:
+        send_email_report(log_entry)
+
+def send_email_report(log_entry):
+    msg = MIMEText(log_entry)
+    msg['Subject'] = "Backup Report"
+    msg['From'] = EMAIL_FROM
+    msg['To'] = EMAIL_TO
+    
+    try:
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASS)
+            server.sendmail(EMAIL_FROM, EMAIL_TO, msg.as_string())
+    except Exception as e:
+        with open(LOG_FILE, "a") as log_file:
+            log_file.write(f"Failed to send email report: {str(e)}\n")
+
+if __name__ == "__main__":
+    run_backup()
