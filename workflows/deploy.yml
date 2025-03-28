@@ -45,7 +45,7 @@ jobs:
           kubectl apply -f k8s/deployment.yml -n wisecow
           kubectl apply -f k8s/service.yml -n wisecow
           kubectl set image deployment/wisecow wisecow=$IMAGE_NAME:$IMAGE_TAG -n wisecow
-          kubectl rollout status deployment/wisecow-deployment -n wisecow
+          kubectl rollout status deployment/wisecow -n wisecow
 
       # ✅ Verify deployment
       - name: Verify deployment
