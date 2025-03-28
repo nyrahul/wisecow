@@ -35,7 +35,7 @@ jobs:
       - name: Set up Kubeconfig
         run: |
           mkdir -p ~/.kube
-          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          echo "${{ secrets.KUBE_CONFIG }}" > | base64 --decode >${home}/.kube/config
           chmod 600 ~/.kube/config
           kubectl config view
           kubectl config use-context kind-wisecow
