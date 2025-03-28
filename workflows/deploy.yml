@@ -41,6 +41,7 @@ jobs:
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
           chmod 600 ~/.kube/config
+          export KUBECONFIG=~/.kube/config
           kubectl config view
 
       # ✅ Step 6: Deploy to Kubernetes
