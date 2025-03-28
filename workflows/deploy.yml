@@ -2,7 +2,7 @@ name: Deploy Wisecow to Kubernetes
 
 on:
   push:
-    branches:
+    branches:               # push check edit
       - main
 
 env:
