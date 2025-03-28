@@ -34,12 +34,15 @@ jobs:
         run: |
           docker build -t $DOCKER_IMAGE .
           docker push $DOCKER_IMAGE
-
+          
       # ✅ Step 5: Set up Kubeconfig
       - name: Set up Kubeconfig
         run: |
           mkdir -p ~/.kube
-          echo "$KUBECONFIG_FILE" > ~/.kube/config
+          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+          kubectl config view
+
 
       # ✅ Step 6: Deploy to Kubernetes
       - name: Deploy to Kubernetes
