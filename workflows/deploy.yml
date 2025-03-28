@@ -35,11 +35,8 @@ jobs:
       - name: Set up Kubeconfig
         run: |
           mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" > | base64 --decode >${home}/.kube/config
-          chmod 600 ~/.kube/config
-          kubectl config view
-          kubectl config use-context kind-wisecow
-          kubectl cluster-info
+          echo "${{ secrets.KUBE_CONFIG }}" > | base64 --decode >${Home}/.kube/config
+          cat ${Home}/.kube/config|
 
       # ✅ Deploy to Kubernetes
       - name: Deploy to Kubernetes
