@@ -7,6 +7,10 @@ on:
 
 env:
   IMAGE_NAME: sand9162/wisecow
+  IMAGE_TAG: latest   # Change the tag version here if needed (e.g., latest or specific tag)
+  K8S_DEPLOYMENT_NAME: wisecow
+  K8S_NAMESPACE: wisecow
+  PORT: 4499
 
 jobs:
   build-and-deploy:
@@ -35,8 +39,8 @@ jobs:
       - name: Set up Kubeconfig
         run: |
           mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" > | base64 --decode >${Home}/.kube/config
-          cat ${Home}/.kube/config|
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > ${HOME}/.kube/config
+          cat ${HOME}/.kube/config
 
       # ✅ Deploy to Kubernetes
       - name: Deploy to Kubernetes
@@ -51,5 +55,6 @@ jobs:
       - name: Verify deployment
         run: |
           kubectl get pods -n wisecow
+
 
 
