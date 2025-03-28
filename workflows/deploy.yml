@@ -44,7 +44,7 @@ jobs:
           IMAGE_TAG=${{ github.sha }}
           kubectl apply -f k8s/deployment.yml -n wisecow
           kubectl apply -f k8s/service.yml -n wisecow
-          kubectl set image deployment/wisecow-deployment wisecow=$IMAGE_NAME:$IMAGE_TAG -n wisecow
+          kubectl set image deployment/wisecow wisecow=$IMAGE_NAME:$IMAGE_TAG -n wisecow
           kubectl rollout status deployment/wisecow-deployment -n wisecow
 
       # ✅ Verify deployment
