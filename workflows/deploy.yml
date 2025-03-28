@@ -54,7 +54,7 @@ jobs:
       # ✅ Verify deployment
       - name: Verify deployment
         run: |
-          kubectl get pods -n wisecow
+          kubectl get pods -n wiseco
 
 
 
