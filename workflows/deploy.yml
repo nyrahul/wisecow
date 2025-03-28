@@ -41,7 +41,7 @@ jobs:
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
           chmod 600 ~/.kube/config
-          kubectl config use-context kind-wisecow-cluster
+          kubectl config use-context kind-wisecow
 
       # ✅ Step 6: Deploy to Kubernetes (Error Handling Added)
       - name: Deploy to Kubernetes
