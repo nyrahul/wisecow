@@ -6,8 +6,7 @@ on:
       - main
 
 env:
-  DOCKER_IMAGE: sand9162/wisecow:latest
-  KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}
+  IMAGE_NAME: sand9162/wisecow
 
 jobs:
   build-and-deploy:
@@ -32,9 +31,10 @@ jobs:
       # ✅ Step 4: Build and push Docker image
       - name: Build and push Docker image
         run: |
-          docker build -t $DOCKER_IMAGE .
-          docker push $DOCKER_IMAGE
-          
+          IMAGE_TAG=${{ github.sha }}
+          docker build -t $IMAGE_NAME:$IMAGE_TAG .
+          docker push $IMAGE_NAME:$IMAGE_TAG
+
       # ✅ Step 5: Set up Kubeconfig
       - name: Set up Kubeconfig
         run: |
@@ -43,16 +43,16 @@ jobs:
           chmod 600 ~/.kube/config
           kubectl config view
 
-
       # ✅ Step 6: Deploy to Kubernetes
       - name: Deploy to Kubernetes
         run: |
+          IMAGE_TAG=${{ github.sha }}
           kubectl apply -f k8s/deployment.yml -n wisecow
           kubectl apply -f k8s/service.yml -n wisecow
-          kubectl rollout restart deployment wisecow -n wisecow
+          kubectl set image deployment/wisecow wisecow=$IMAGE_NAME:$IMAGE_TAG -n wisecow
+          kubectl rollout status deployment/wisecow -n wisecow
 
       # ✅ Step 7: Verify deployment
       - name: Verify deployment
         run: |
           kubectl get pods -n wisecow
-
