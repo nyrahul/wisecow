@@ -35,25 +35,26 @@ jobs:
           docker build -t $IMAGE_NAME:$IMAGE_TAG .
           docker push $IMAGE_NAME:$IMAGE_TAG
 
-      # ✅ Step 5: Set up Kubeconfig
+      # ✅ Step 5: Set up Kubeconfig (Fixing localhost error)
       - name: Set up Kubeconfig
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
           chmod 600 ~/.kube/config
-          export KUBECONFIG=~/.kube/config
-          kubectl config view
+          kubectl config use-context kind-wisecow-cluster
 
-      # ✅ Step 6: Deploy to Kubernetes
+      # ✅ Step 6: Deploy to Kubernetes (Error Handling Added)
       - name: Deploy to Kubernetes
         run: |
           IMAGE_TAG=${{ github.sha }}
           kubectl apply -f k8s/deployment.yml -n wisecow
           kubectl apply -f k8s/service.yml -n wisecow
-          kubectl set image deployment/wisecow wisecow=$IMAGE_NAME:$IMAGE_TAG -n wisecow
-          kubectl rollout status deployment/wisecow -n wisecow
+          kubectl set image deployment/wisecow wisecow=$IMAGE_NAME:$IMAGE_TAG -n wisecow || exit 1
+          kubectl rollout status deployment/wisecow -n wisecow || exit 1
 
-      # ✅ Step 7: Verify deployment
+      # ✅ Step 7: Verify Deployment (Improved Output)
       - name: Verify deployment
         run: |
           kubectl get pods -n wisecow
+          kubectl describe deployment wisecow -n wisecow
+
