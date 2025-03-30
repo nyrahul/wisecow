@@ -1,6 +1,7 @@
 name: Deploy Wisecow to Kubernetes
 
 on:
+  workflow_dispatch:
   push:
     branches:               # push check edit
       - main
